@@ -16,7 +16,6 @@ public class Customer {
     @Id
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
-    @Column(nullable = false)
     private String id;
 
     @NotBlank(message = "Name is Mandatory")
@@ -37,6 +36,8 @@ public class Customer {
     @NotEmpty(message = "Address is Required")
     @Size(min=4, max = 50, message = "Address size must be between 6 and 50")
     private String address;
+
+    @Size(min=10, max = 15, message = "Phone Number size must be between 10 and 15")
     private String phoneNumber;
 
     @CreatedDate

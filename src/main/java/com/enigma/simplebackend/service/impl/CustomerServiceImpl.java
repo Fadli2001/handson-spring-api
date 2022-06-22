@@ -1,10 +1,13 @@
 package com.enigma.simplebackend.service.impl;
 
 import com.enigma.simplebackend.entity.Customer;
+import com.enigma.simplebackend.exception.DuplicateException;
 import com.enigma.simplebackend.exception.NotFoundException;
 import com.enigma.simplebackend.repository.CustomerRepository;
 import com.enigma.simplebackend.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.NonTransientDataAccessException;
+import org.springframework.dao.TransientDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,8 +23,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer create(Customer customer) {
-        if (customer.getId() != null) getById(customer.getId());
-        return customerRepository.save(customer);
+        try{
+            if (customer.getId() != null) getById(customer.getId());
+            return customerRepository.save(customer);
+        }catch (NonTransientDataAccessException | TransientDataAccessException e){
+            throw new DuplicateException("Email already used");
+        }
+
     }
 
     @Override

@@ -55,7 +55,7 @@ public class CustomerController {
     }
 
     @PutMapping
-    public ResponseEntity<WebResponse<Customer>> updateCustomerById(@RequestBody Customer customer) {
+    public ResponseEntity<WebResponse<Customer>> updateCustomerById(@Valid @RequestBody Customer customer) {
         return ResponseEntity.ok().body(new WebResponse<>("Successfully Update Customer", customerService.create(customer)));
     }
 
