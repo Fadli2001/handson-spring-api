@@ -1,6 +1,8 @@
 package com.enigma.simplebackend.entity;
 
+import com.enigma.simplebackend.payload.response.photoprofile.PhotoProfileResponse;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.CreatedDate;
@@ -40,6 +42,49 @@ public class Customer {
     @Size(min=10, max = 15, message = "Phone Number size must be between 10 and 15")
     private String phoneNumber;
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setPhotoProfile(PhotoProfile photoProfile) {
+        this.photoProfile = photoProfile;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @OneToOne(targetEntity = PhotoProfile.class,fetch = FetchType.EAGER)
+    @JoinColumn(name = "file_id")
+    @JsonIgnore
+    private PhotoProfile photoProfile;
+
+    private String photoUrl;
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
     @CreatedDate
     @Column(updatable = false)
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss a", timezone = "Asia/Jakarta")
@@ -60,7 +105,28 @@ public class Customer {
         this.updatedAt = updatedAt;
     }
 
+    public Customer(String name, String email, Date birthDate, String address, String phoneNumber, PhotoProfile photoProfile) {
+        this.name = name;
+        this.email = email;
+        this.birthDate = birthDate;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.photoProfile = photoProfile;
+    }
+
+    public Customer(String name, String email, Date birthDate, String address, String phoneNumber) {
+        this.name = name;
+        this.email = email;
+        this.birthDate = birthDate;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+    }
+
     public Customer() {
+    }
+
+    public PhotoProfile getPhotoProfile() {
+        return photoProfile;
     }
 
     @PrePersist
@@ -73,6 +139,7 @@ public class Customer {
     private void updatedDate() {
         updatedAt = new Date();
     }
+
 
     public Date getCreatedAt() {
         return createdAt;

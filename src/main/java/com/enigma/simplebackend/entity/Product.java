@@ -43,8 +43,14 @@ public class Product {
         this.productName = productName;
         this.price = price;
         this.stock = stock;
-            this.createdAt = createdAt;
+        this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    public Product(String productName, Integer price, Integer stock) {
+        this.productName = productName;
+        this.price = price;
+        this.stock = stock;
     }
 
     public Product(){};

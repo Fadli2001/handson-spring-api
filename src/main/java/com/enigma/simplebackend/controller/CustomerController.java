@@ -5,13 +5,16 @@ import com.enigma.simplebackend.entity.Customer;
 import com.enigma.simplebackend.service.CustomerService;
 import com.enigma.simplebackend.util.PageResponse;
 import com.enigma.simplebackend.util.WebResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -22,9 +25,18 @@ public class CustomerController {
     @Autowired
     CustomerService customerService;
 
-    @PostMapping
-    public ResponseEntity<WebResponse<Customer>> createCustomer(@Valid @RequestBody Customer customer) {
-        return ResponseEntity.ok().body(new WebResponse<>("Successfully Create a new customers", customerService.create(customer)));
+    @PostMapping(
+            consumes = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.MULTIPART_FORM_DATA_VALUE,
+            },
+            produces = "application/json"
+    )
+    public ResponseEntity<WebResponse<Customer>> createCustomer(
+            @RequestPart(name = "file",required = false) MultipartFile multipartFile,@Valid
+            @RequestPart(name = "body",required = true) String customer
+    ) {
+        return ResponseEntity.ok().body(new WebResponse<>("Successfully Create a new customers", customerService.create(customer,multipartFile)));
     }
 
     @GetMapping
@@ -54,9 +66,19 @@ public class CustomerController {
         return ResponseEntity.ok().body(new WebResponse<>("Successfully Get Customer", customer));
     }
 
-    @PutMapping
-    public ResponseEntity<WebResponse<Customer>> updateCustomerById(@Valid @RequestBody Customer customer) {
-        return ResponseEntity.ok().body(new WebResponse<>("Successfully Update Customer", customerService.create(customer)));
+    @PutMapping(
+            consumes = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.MULTIPART_FORM_DATA_VALUE,
+            },
+            produces = "application/json"
+    )
+    public ResponseEntity<WebResponse<Customer>> updateCustomerById(
+
+            @RequestPart(name = "file",required = false) MultipartFile multipartFile,@Valid
+            @RequestPart(name = "body",required = true) String requestCustomer
+    ) throws JsonProcessingException {
+        return ResponseEntity.ok().body(new WebResponse<>("Successfully Update Customer", customerService.create(requestCustomer,multipartFile)));
     }
 
     @DeleteMapping("/{id}")
