@@ -7,6 +7,7 @@ import com.enigma.simplebackend.util.PageResponse;
 import com.enigma.simplebackend.util.WebResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("customer")
+@RequestMapping("customers")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200"})
 public class CustomerController {
 
     @Autowired
@@ -33,7 +35,7 @@ public class CustomerController {
             produces = "application/json"
     )
     public ResponseEntity<WebResponse<Customer>> createCustomer(
-            @RequestPart(name = "file",required = false) MultipartFile multipartFile,@Valid
+            @RequestPart(name = "file",required = false) MultipartFile multipartFile,
             @RequestPart(name = "body",required = true) String customer
     ) {
         return ResponseEntity.ok().body(new WebResponse<>("Successfully Create a new customers", customerService.create(customer,multipartFile)));
@@ -75,7 +77,7 @@ public class CustomerController {
     )
     public ResponseEntity<WebResponse<Customer>> updateCustomerById(
 
-            @RequestPart(name = "file",required = false) MultipartFile multipartFile,@Valid
+            @RequestPart(name = "file",required = false) MultipartFile multipartFile,
             @RequestPart(name = "body",required = true) String requestCustomer
     ) throws JsonProcessingException {
         return ResponseEntity.ok().body(new WebResponse<>("Successfully Update Customer", customerService.create(requestCustomer,multipartFile)));

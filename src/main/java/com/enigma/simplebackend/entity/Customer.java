@@ -39,7 +39,7 @@ public class Customer {
     @Size(min=4, max = 50, message = "Address size must be between 6 and 50")
     private String address;
 
-    @Size(min=10, max = 15, message = "Phone Number size must be between 10 and 15")
+    @Size(min=9, max = 15, message = "Phone Number size must be between 9 and 15")
     private String phoneNumber;
 
     public void setEmail(String email) {
@@ -70,7 +70,7 @@ public class Customer {
         this.id = id;
     }
 
-    @OneToOne(targetEntity = PhotoProfile.class,fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = PhotoProfile.class,fetch = FetchType.EAGER,cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "file_id")
     @JsonIgnore
     private PhotoProfile photoProfile;

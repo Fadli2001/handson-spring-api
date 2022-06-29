@@ -1,6 +1,7 @@
 package com.enigma.simplebackend.service.impl;
 
 import com.enigma.simplebackend.entity.PhotoProfile;
+import com.enigma.simplebackend.exception.NotAcceptableException;
 import com.enigma.simplebackend.exception.NotFoundException;
 import com.enigma.simplebackend.payload.response.photoprofile.PhotoProfileResponse;
 import com.enigma.simplebackend.repository.PhotoProfileRepository;
@@ -12,62 +13,73 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 @Service
 public class PhotoProfileServiceImpl implements PhotoProfileService {
 
-    @Autowired
-    PhotoProfileRepository photoProfileRepository;
+        @Autowired
+        PhotoProfileRepository photoProfileRepository;
 
-    @Override
-    public PhotoProfileResponse create(MultipartFile multipartFile){
+        private static final List<String> contentTypes = Arrays.asList("image/png", "image/jpeg", "image/gif");
 
-        String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
-        PhotoProfileResponse photoProfileResponse = new PhotoProfileResponse();
-        try{
-            PhotoProfile  photoProfile = new PhotoProfile();
-            photoProfile.setName(fileName);
-            photoProfile.setType(multipartFile.getContentType());
-            photoProfile.setData(multipartFile.getBytes());
-            PhotoProfile savePhoto = photoProfileRepository.save(photoProfile);
+        @Override
+        public PhotoProfileResponse create(MultipartFile multipartFile){
 
-            String fileDownloadUri = ServletUriComponentsBuilder
-                    .fromCurrentContextPath()
-                    .path("/photoProfile/")
-                    .path(savePhoto.getFileId())
-                    .toUriString();
-            photoProfileResponse.setId(savePhoto.getFileId());
-             photoProfileResponse.setName(savePhoto.getName());
-             photoProfileResponse.setUrl(fileDownloadUri);
-             photoProfileResponse.setType(savePhoto.getType());
-             photoProfileResponse.setSize(savePhoto.getData().length);
+            String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+            PhotoProfileResponse photoProfileResponse = new PhotoProfileResponse();
+            try{
+                PhotoProfile  photoProfile = new PhotoProfile();
 
-        } catch (IOException e) {
-            e.printStackTrace();
+                if(contentTypes.contains(multipartFile.getContentType())){
+                    photoProfile.setName(fileName);
+                    photoProfile.setType(multipartFile.getContentType());
+                    photoProfile.setData(multipartFile.getBytes());
+                    PhotoProfile savePhoto = photoProfileRepository.save(photoProfile);
+                    String fileDownloadUri = ServletUriComponentsBuilder
+                            .fromCurrentContextPath()
+                            .path("/photoProfile/")
+                            .path(savePhoto.getFileId())
+                            .toUriString();
+                    photoProfileResponse.setId(savePhoto.getFileId());
+                    photoProfileResponse.setName(savePhoto.getName());
+                    photoProfileResponse.setUrl(fileDownloadUri);
+                    photoProfileResponse.setType(savePhoto.getType());
+                    photoProfileResponse.setSize(savePhoto.getData().length);
+                }else{
+                    throw  new NotAcceptableException("Only jpg,jpeg,png or JPG images are allowed");
+                }
+
+
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            return photoProfileResponse;
         }
 
+        @Override
+        public PhotoProfile getById(String id) {
+            return photoProfileRepository.findById(id).orElseThrow(() -> new NotFoundException("File Not Found"));
+        }
 
-        return photoProfileResponse;
-    }
+        @Override
+        public Stream<PhotoProfile> getAll() {
+            return photoProfileRepository.findAll().stream();
 
-    @Override
-    public PhotoProfile getById(String id) {
-        return photoProfileRepository.findById(id).orElseThrow(() -> new NotFoundException("File Not Found"));
-    }
+        }
 
-    @Override
-    public Stream<PhotoProfile> getAll() {
-        return photoProfileRepository.findAll().stream();
-
-    }
-
-    @Override
-    public String deleteById(String id) {
-        PhotoProfile photoProfile = getById(id);
-        photoProfileRepository.delete(photoProfile);
-        return id;
-    }
+        @Override
+        public String deleteById(String id) {
+            PhotoProfile photoProfile = getById(id);
+            photoProfileRepository.delete(photoProfile);
+            return id;
+        }
 
 }

@@ -8,9 +8,7 @@ import com.enigma.simplebackend.payload.response.photoprofile.PhotoProfileRespon
 import com.enigma.simplebackend.repository.CustomerRepository;
 import com.enigma.simplebackend.service.CustomerService;
 import com.enigma.simplebackend.service.PhotoProfileService;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.NonTransientDataAccessException;
@@ -19,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import java.util.List;
 
@@ -35,30 +34,23 @@ public class CustomerServiceImpl implements CustomerService {
     ObjectMapper objectMapper;
 
     @Override
-    public Customer create(String customer,MultipartFile multipartFile) {
+    public  Customer create(String customer,MultipartFile multipartFile) {
         try{
-            Customer customerCreate = objectMapper.readValue(customer,  Customer.class);
-
-            if(multipartFile != null){
-                PhotoProfileResponse photoProfileResponse = photoProfileService.create(multipartFile);
-                PhotoProfile photoProfile = photoProfileService.getById(photoProfileResponse.getId());
-                customerCreate.setPhotoProfile(photoProfile);
-                customerCreate.setPhotoUrl(photoProfileResponse.getUrl());
-            }
+            Customer customerCreate = objectMapper.readValue(customer,Customer.class);
+            if(multipartFile != null) storeFile(customerCreate,multipartFile);
             if(customerCreate.getId() != null) getById(customerCreate.getId());
-
             return customerRepository.save(customerCreate);
-        }catch (NonTransientDataAccessException | TransientDataAccessException e){
+        }catch (NonTransientDataAccessException | TransientDataAccessException | JsonProcessingException e){
             throw new DuplicateException("Email already used");
-        } catch (JsonMappingException e) {
-            throw new RuntimeException(e);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
         }
-
     }
 
-
+    private void storeFile(Customer customer,MultipartFile multipartFile){
+        PhotoProfileResponse photoProfileResponse = photoProfileService.create(multipartFile);
+        PhotoProfile photoProfile = photoProfileService.getById(photoProfileResponse.getId());
+        customer.setPhotoProfile(photoProfile);
+        customer.setPhotoUrl(photoProfileResponse.getUrl());
+    }
 
     @Override
     public List<Customer> findAll() {
@@ -82,35 +74,5 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findAll(pageable);
     }
 
-    @Override
-    public Customer update(String customer, MultipartFile multipartFile) {
-        try{
-            objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-            Customer customerCreate = objectMapper.readValue(customer,  Customer.class);
-
-            if(multipartFile != null){
-                if(customerCreate.getPhotoProfile() != null) {
-                    photoProfileService.deleteById(customerCreate.getPhotoProfile().getFileId());
-                }else{
-                PhotoProfileResponse photoProfileResponse = photoProfileService.create(multipartFile);
-                PhotoProfile photoProfile = photoProfileService.getById(photoProfileResponse.getId());
-                customerCreate.setPhotoProfile(photoProfile);
-                customerCreate.setPhotoUrl(photoProfileResponse.getUrl());
-                }
-
-            }
-
-            getById(customerCreate.getId());
-
-            return customerRepository.save(customerCreate);
-        }catch (NonTransientDataAccessException | TransientDataAccessException e){
-            throw new DuplicateException("Email already used");
-        } catch (JsonMappingException e) {
-            throw new RuntimeException(e);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
 
 }

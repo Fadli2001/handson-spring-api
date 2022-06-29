@@ -21,6 +21,4 @@ public interface CustomerService {
 
     Page<Customer> getAllWithPage(Pageable pageable);
 
-    Customer update(String createRequest, MultipartFile multipartFile) throws JsonProcessingException;
-
 }
