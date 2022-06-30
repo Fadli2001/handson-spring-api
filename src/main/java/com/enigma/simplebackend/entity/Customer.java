@@ -7,6 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -22,6 +23,7 @@ public class Customer {
 
     @NotBlank(message = "Name is Mandatory")
     @NotEmpty(message = "Name is Required")
+    @Column(nullable = false)
     @Size(min=4, max = 50,message = "Name size must be between 4 and 50")
     private String name;
     @Column(unique = true)

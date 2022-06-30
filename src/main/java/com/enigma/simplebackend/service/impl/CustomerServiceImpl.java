@@ -3,11 +3,13 @@ package com.enigma.simplebackend.service.impl;
 import com.enigma.simplebackend.entity.Customer;
 import com.enigma.simplebackend.entity.PhotoProfile;
 import com.enigma.simplebackend.exception.DuplicateException;
+import com.enigma.simplebackend.exception.NotAcceptableException;
 import com.enigma.simplebackend.exception.NotFoundException;
 import com.enigma.simplebackend.payload.response.photoprofile.PhotoProfileResponse;
 import com.enigma.simplebackend.repository.CustomerRepository;
 import com.enigma.simplebackend.service.CustomerService;
 import com.enigma.simplebackend.service.PhotoProfileService;
+import com.enigma.simplebackend.util.ValidationUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 
 import java.util.List;
@@ -33,12 +36,17 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     ObjectMapper objectMapper;
 
+    @Autowired
+    ValidationUtil validationUtil;
+
     @Override
     public  Customer create(String customer,MultipartFile multipartFile) {
         try{
             Customer customerCreate = objectMapper.readValue(customer,Customer.class);
+            validationUtil.validate(customerCreate);
             if(multipartFile != null) storeFile(customerCreate,multipartFile);
             if(customerCreate.getId() != null) getById(customerCreate.getId());
+
             return customerRepository.save(customerCreate);
         }catch (NonTransientDataAccessException | TransientDataAccessException | JsonProcessingException e){
             throw new DuplicateException("Email already used");

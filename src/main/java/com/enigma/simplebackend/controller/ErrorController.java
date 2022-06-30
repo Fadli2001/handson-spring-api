@@ -7,8 +7,10 @@ import com.enigma.simplebackend.response.ErrorResponse;
 import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import javax.validation.ConstraintViolationException;
 
@@ -56,6 +58,26 @@ public class ErrorController {
         HttpStatus limitSize = HttpStatus.PAYLOAD_TOO_LARGE;
         ErrorResponse errorResponse = new ErrorResponse(
                 limitSize.value(),limitSize.getReasonPhrase(),exception.getMessage()
+        );
+
+        return new ResponseEntity<>(errorResponse,limitSize);
+    }
+
+    @ExceptionHandler(value = {MissingServletRequestPartException.class})
+    public ResponseEntity<Object> handleLimitSize(MissingServletRequestPartException exception){
+        HttpStatus limitSize = HttpStatus.BAD_REQUEST;
+        ErrorResponse errorResponse = new ErrorResponse(
+                limitSize.value(),limitSize.getReasonPhrase(),exception.getMessage()
+        );
+
+        return new ResponseEntity<>(errorResponse,limitSize);
+    }
+
+    @ExceptionHandler(value = {HttpMessageNotReadableException.class})
+    public ResponseEntity<Object> handleLimitSize(HttpMessageNotReadableException exception){
+        HttpStatus limitSize = HttpStatus.BAD_REQUEST;
+        ErrorResponse errorResponse = new ErrorResponse(
+                limitSize.value(),limitSize.getReasonPhrase(),exception.getLocalizedMessage()
         );
 
         return new ResponseEntity<>(errorResponse,limitSize);

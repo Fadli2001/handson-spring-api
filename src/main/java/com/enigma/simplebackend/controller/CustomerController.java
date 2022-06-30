@@ -4,6 +4,7 @@ package com.enigma.simplebackend.controller;
 import com.enigma.simplebackend.entity.Customer;
 import com.enigma.simplebackend.service.CustomerService;
 import com.enigma.simplebackend.util.PageResponse;
+import com.enigma.simplebackend.util.ValidationUtil;
 import com.enigma.simplebackend.util.WebResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +19,18 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.validation.Validation;
 
 @RestController
 @RequestMapping("customers")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200"})
+//@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200"})
 public class CustomerController {
 
     @Autowired
     CustomerService customerService;
+
+    @Autowired
+    ValidationUtil validationUtil;
 
     @PostMapping(
             consumes = {
