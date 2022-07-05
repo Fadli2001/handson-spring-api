@@ -3,9 +3,8 @@ package com.enigma.simplebackend.service.impl;
 import com.enigma.simplebackend.entity.Customer;
 import com.enigma.simplebackend.entity.PhotoProfile;
 import com.enigma.simplebackend.exception.DuplicateException;
-import com.enigma.simplebackend.exception.NotAcceptableException;
 import com.enigma.simplebackend.exception.NotFoundException;
-import com.enigma.simplebackend.payload.response.photoprofile.PhotoProfileResponse;
+import com.enigma.simplebackend.payload.PhotoProfileResponse;
 import com.enigma.simplebackend.repository.CustomerRepository;
 import com.enigma.simplebackend.service.CustomerService;
 import com.enigma.simplebackend.service.PhotoProfileService;
@@ -19,7 +18,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 
 import java.util.List;

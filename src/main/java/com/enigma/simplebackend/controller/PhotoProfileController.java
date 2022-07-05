@@ -1,7 +1,7 @@
 package com.enigma.simplebackend.controller;
 
 import com.enigma.simplebackend.entity.PhotoProfile;
-import com.enigma.simplebackend.payload.response.photoprofile.PhotoProfileResponse;
+import com.enigma.simplebackend.payload.PhotoProfileResponse;
 import com.enigma.simplebackend.service.PhotoProfileService;
 import com.enigma.simplebackend.util.WebResponse;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.enigma.simplebackend.payload.response.photoprofile;
+package com.enigma.simplebackend.payload;
 
 public class PhotoProfileResponse {
 

@@ -56,7 +56,6 @@ public class SimpleBackendApplication {
 
         customerRepository.saveAll(customers);
         productRepository.saveAll(products);
-
     }
 
 

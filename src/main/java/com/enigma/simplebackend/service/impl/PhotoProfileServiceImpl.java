@@ -3,7 +3,7 @@ package com.enigma.simplebackend.service.impl;
 import com.enigma.simplebackend.entity.PhotoProfile;
 import com.enigma.simplebackend.exception.NotAcceptableException;
 import com.enigma.simplebackend.exception.NotFoundException;
-import com.enigma.simplebackend.payload.response.photoprofile.PhotoProfileResponse;
+import com.enigma.simplebackend.payload.PhotoProfileResponse;
 import com.enigma.simplebackend.repository.PhotoProfileRepository;
 import com.enigma.simplebackend.service.PhotoProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
