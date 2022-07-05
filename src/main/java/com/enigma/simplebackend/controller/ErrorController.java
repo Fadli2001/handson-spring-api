@@ -64,23 +64,23 @@ public class ErrorController {
     }
 
     @ExceptionHandler(value = {MissingServletRequestPartException.class})
-    public ResponseEntity<Object> handleLimitSize(MissingServletRequestPartException exception){
-        HttpStatus limitSize = HttpStatus.BAD_REQUEST;
+    public ResponseEntity<Object> missingRequestPart(MissingServletRequestPartException exception){
+        HttpStatus err = HttpStatus.BAD_REQUEST;
         ErrorResponse errorResponse = new ErrorResponse(
-                limitSize.value(),limitSize.getReasonPhrase(),exception.getMessage()
+                err.value(),err.getReasonPhrase(),exception.getMessage()
         );
 
-        return new ResponseEntity<>(errorResponse,limitSize);
+        return new ResponseEntity<>(errorResponse,err);
     }
 
     @ExceptionHandler(value = {HttpMessageNotReadableException.class})
-    public ResponseEntity<Object> handleLimitSize(HttpMessageNotReadableException exception){
-        HttpStatus limitSize = HttpStatus.BAD_REQUEST;
+    public ResponseEntity<Object> notReadable(HttpMessageNotReadableException exception){
+        HttpStatus readable = HttpStatus.BAD_REQUEST;
         ErrorResponse errorResponse = new ErrorResponse(
-                limitSize.value(),limitSize.getReasonPhrase(),exception.getLocalizedMessage()
+                readable.value(),readable.getReasonPhrase(),exception.getLocalizedMessage()
         );
 
-        return new ResponseEntity<>(errorResponse,limitSize);
+        return new ResponseEntity<>(errorResponse,readable);
     }
 
 
